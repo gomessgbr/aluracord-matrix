@@ -85,7 +85,12 @@ export default function PaginaInicial() {
             </Text>
 
             <TextField
-              onChange={(event) => setUserName(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value;
+                value.length > 2
+                  ? setUserName(value)
+                  : setUserName("gomessgbr");
+              }}
               fullWidth
               textFieldColors={{
                 neutral: {
