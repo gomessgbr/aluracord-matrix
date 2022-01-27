@@ -1,28 +1,29 @@
 import { Box, Text, TextField, Image, Button } from "@skynexui/components";
-import React, { useState } from "react";
+import React from "react";
 import appConfig from "../config.json";
 
 export default function ChatPage() {
-  const [mensagem, setMensagem] = useState();
-  const [listaDeMensagens, setListaDeMensagens] = useState([]);
-
-  const handleNewMessage = (novaMensagem) => {
+  const [mensagem, setMensagem] = React.useState("");
+  const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
+  function handleNovaMensagem(novaMensagem) {
     const mensagem = {
       id: listaDeMensagens.length + 1,
-      de: "gomessgbr",
-      text: novaMensagem,
+      de: "vanessametonini",
+      texto: novaMensagem,
     };
+
     setListaDeMensagens([mensagem, ...listaDeMensagens]);
     setMensagem("");
-  };
+  }
+
   return (
     <Box
       styleSheet={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        //backgroundColor: appConfig.theme.colors.primary[500],
-        backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/camp-nou-1024x576.jpg)`,
+        backgroundColor: appConfig.theme.colors.primary[500],
+        backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "multiply",
@@ -73,7 +74,7 @@ export default function ChatPage() {
               onKeyPress={(event) => {
                 if (event.key === "Enter") {
                   event.preventDefault();
-                  handleNewMessage(mensagem);
+                  handleNovaMensagem(mensagem);
                 }
               }}
               placeholder="Insira sua mensagem aqui..."
@@ -121,7 +122,7 @@ function Header() {
 }
 
 function MessageList(props) {
-  console.log("MessageList", props);
+  console.log(props);
   return (
     <Box
       tag="ul"
@@ -135,47 +136,49 @@ function MessageList(props) {
       }}
     >
       {props.mensagens.map((mensagem) => {
-        <Text
-          key={mensagem.id}
-          tag="li"
-          styleSheet={{
-            borderRadius: "5px",
-            padding: "6px",
-            marginBottom: "12px",
-            hover: {
-              backgroundColor: appConfig.theme.colors.neutrals[700],
-            },
-          }}
-        >
-          <Box
+        return (
+          <Text
+            key={mensagem.id}
+            tag="li"
             styleSheet={{
-              marginBottom: "8px",
+              borderRadius: "5px",
+              padding: "6px",
+              marginBottom: "12px",
+              hover: {
+                backgroundColor: appConfig.theme.colors.neutrals[700],
+              },
             }}
           >
-            <Image
+            <Box
               styleSheet={{
-                width: "20px",
-                height: "20px",
-                borderRadius: "50%",
-                display: "inline-block",
-                marginRight: "8px",
+                marginBottom: "8px",
               }}
-              src={`https://github.com/gomessgbr.png`}
-            />
-            <Text tag="strong">{mensagem.de}</Text>
-            <Text
-              styleSheet={{
-                fontSize: "10px",
-                marginLeft: "8px",
-                color: appConfig.theme.colors.neutrals[300],
-              }}
-              tag="span"
             >
-              {new Date().toLocaleDateString()}
-            </Text>
-          </Box>
-          {mensagem.texto}
-        </Text>;
+              <Image
+                styleSheet={{
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                  display: "inline-block",
+                  marginRight: "8px",
+                }}
+                src={`https://github.com/vanessametonini.png`}
+              />
+              <Text tag="strong">{mensagem.de}</Text>
+              <Text
+                styleSheet={{
+                  fontSize: "10px",
+                  marginLeft: "8px",
+                  color: appConfig.theme.colors.neutrals[300],
+                }}
+                tag="span"
+              >
+                {new Date().toLocaleDateString()}
+              </Text>
+            </Box>
+            {mensagem.texto}
+          </Text>
+        );
       })}
     </Box>
   );
