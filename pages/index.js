@@ -3,6 +3,10 @@ import { Box, Button, Text, TextField, Image } from "@skynexui/components";
 import { useRouter } from "next/router";
 import appConfig from "../config.json";
 
+/*To DO
+    Deixar uma imagem padrão 
+*/
+
 function Titulo(props) {
   const Tag = props.tag || "h1";
   return (
