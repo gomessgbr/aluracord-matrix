@@ -6,6 +6,7 @@ import { createClient } from "@supabase/supabase-js";
     Fazer o botão de excluir mensagens
     colocar o meu GitHub
     pegar o github da tela anterior
+    Refatorar o código, separando as partes
 */
 
 const SUPABASE_ANON_KEY =
