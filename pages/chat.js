@@ -3,7 +3,8 @@ import React, { useEffect } from "react";
 import appConfig from "../config.json";
 import { createClient } from "@supabase/supabase-js";
 /*To DO
-    Fazer o botão de excluir mensagens
+    Fazer o botão de excluir mensagens, e exluir do supabase
+    Colocar um loading quando tiver enviando a mensagem
     colocar o meu GitHub
     pegar o github da tela anterior
     Refatorar o código, separando as partes
