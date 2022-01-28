@@ -1,10 +1,12 @@
 import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React, { useEffect } from "react";
-import appConfig from "../config.json";
+import appConfig from '../config.json';
+import {useRouter} from 'next/router'
 import { createClient } from "@supabase/supabase-js";
+import { ButtonSendSticker } from "../components/ButtonSendSticker";
 /*To DO
     Fazer o botão de excluir mensagens, e exluir do supabase
-    Colocar um loading quando tiver enviando a mensagem
+    Colocar um loading quando tiver enviando a mensageml
     colocar o meu GitHub
     pegar o github da tela anterior
     Refatorar o código, separando as partes
@@ -15,7 +17,18 @@ const SUPABASE_ANON_KEY =
 const SUPABASE_URL = "https://mlfrvxuzuvxhpwjzilho.supabase.co";
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+  return supabaseClient
+    .from('mensagens')
+    .on('INSERT', (respostaLive) => {
+      adicionaMensagem(respostaLive.new);
+    })
+    .subscribe();
+}
+
 export default function ChatPage() {
+  const roteamento = useRouter();
+  const usuarioLogado= roteamento.query.username;
   const [mensagem, setMensagem] = React.useState("");
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
@@ -28,12 +41,35 @@ export default function ChatPage() {
         console.log("Dados da consulta:", data);
         setListaDeMensagens(data);
       });
+      const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
+        console.log('Nova mensagem:', novaMensagem);
+        console.log('listaDeMensagens:', listaDeMensagens);
+        // Quero reusar um valor de referencia (objeto/array) 
+        // Passar uma função pro setState
+  
+        // setListaDeMensagens([
+        //     novaMensagem,
+        //     ...listaDeMensagens
+        // ])
+        setListaDeMensagens((valorAtualDaLista) => {
+          console.log('valorAtualDaLista:', valorAtualDaLista);
+          return [
+            novaMensagem,
+            ...valorAtualDaLista,
+          ]
+        });
+      });
+  
+      return () => {
+        subscription.unsubscribe();
+      }
+
   }, []);
 
+  
   function handleNovaMensagem(novaMensagem) {
-    const mensagem = {
-      //id: listaDeMensagens.length + 1,
-      de: "gomessgbr",
+    const mensagem = {      
+      de: usuarioLogado,
       texto: novaMensagem,
     };
     supabaseClient
@@ -44,7 +80,7 @@ export default function ChatPage() {
       ])
       .then(({ data }) => {
         console.log("Criando mensagem: ", data);
-        setListaDeMensagens([data[0], ...listaDeMensagens]);
+        
       });
     setMensagem("");
   }
@@ -123,6 +159,14 @@ export default function ChatPage() {
                 color: appConfig.theme.colors.neutrals[200],
               }}
             />
+            {/* CallBack */}
+            <ButtonSendSticker
+              onStickerClick={(sticker) => {
+                // console.log('[USANDO O COMPONENTE] Salva esse sticker no banco', sticker);
+                handleNovaMensagem(':sticker: ' + sticker);
+              }}
+            />
+
           </Box>
         </Box>
       </Box>
@@ -208,8 +252,15 @@ function MessageList(props) {
               >
                 {new Date().toLocaleDateString()}
               </Text>
-            </Box>
-            {mensagem.texto}
+            </Box>              
+            {mensagem.texto.startsWith(':sticker:')
+              ? (
+                <Image src={mensagem.texto.replace(':sticker:', '')} />
+              )
+              : (
+                mensagem.texto
+              )}
+            
           </Text>
         );
       })}
